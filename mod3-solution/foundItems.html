@@ -1,4 +1,4 @@
-<h3>Found Items</h3>
+<h3 ng-if="foundItemsCtrl.showTitle()">Found Items</h3>
 <ol>
   <li ng-repeat="menu in foundItemsCtrl.found">
     {{menu.name}} {{menu.short_name}} {{menu.description}}
@@ -6,4 +6,4 @@
   </li>
 </ol>
 
-<div class="error" ng-if="foundItemsCtrl.showMessage()">Nothing found</div>
+<div class="error" ng-if="foundItemsCtrl.showMessage">Nothing found</div>

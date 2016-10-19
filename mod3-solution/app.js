@@ -11,6 +11,7 @@
         templateUrl: 'foundItems.html',
         scope: {
           found: '<',
+          showMessage: '<',
           onRemove: '&'
         },
         controller: FoundItemsDirectiveController,
@@ -22,14 +23,12 @@
 
     function FoundItemsDirectiveController(){
       var ctrl = this;
-
-      ctrl.showMessage = function () {
-        if (ctrl.found !== undefined && ctrl.found.length == 0){
-          return true;
+      ctrl.showTitle = function () {
+        if (ctrl.found === undefined || ctrl.found.length == 0){
+          return false;
         }
-        return false;
+        return true;
       };
-
     }
 
     NarrowItDownController.$inject = ['MenuSearchService'];
@@ -37,9 +36,13 @@
     function NarrowItDownController(MenuSearchService){
       var ctrl = this;
 
+      ctrl.showMessage = false;
+
       ctrl.search = function(){
         var foundItems = [];
-        if (ctrl.searchTerm !== ''){
+        var showMessage = true;
+
+        if (ctrl.searchTerm !== undefined && ctrl.searchTerm !== ''){
           var promise = MenuSearchService.getMatchedMenuItems();
           promise.then(function (response) {
             var items = response.data.menu_items;
@@ -49,11 +52,16 @@
                 foundItems.push(items[i]);
               }
             }
-
+            if (foundItems.length > 0){
+              showMessage = false;
+            }
+            ctrl.showMessage = showMessage;
           })
           .catch(function (error) {
             console.log("Something went wrong.");
           });
+        }else{
+          ctrl.showMessage = showMessage;
         }
         ctrl.found = foundItems;
       };
