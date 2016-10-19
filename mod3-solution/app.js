@@ -23,6 +23,13 @@
     function FoundItemsDirectiveController(){
       var ctrl = this;
 
+      ctrl.showMessage = function () {
+        if (ctrl.found !== undefined && ctrl.found.length == 0){
+          return true;
+        }
+        return false;
+      };
+
     }
 
     NarrowItDownController.$inject = ['MenuSearchService'];
@@ -31,22 +38,24 @@
       var ctrl = this;
 
       ctrl.search = function(){
-        var promise = MenuSearchService.getMatchedMenuItems();
-
-        promise.then(function (response) {
-          var foundItems = [];
-          var items = response.data.menu_items;
-          for (var i=0; i<items.length; i++){
-            var description = items[i].description;
-            if (description.indexOf(ctrl.searchTerm) != -1){
-              foundItems.push(items[i]);
+        var foundItems = [];
+        if (ctrl.searchTerm !== ''){
+          var promise = MenuSearchService.getMatchedMenuItems();
+          promise.then(function (response) {
+            var items = response.data.menu_items;
+            for (var i=0; i<items.length; i++){
+              var description = items[i].description;
+              if (description.indexOf(ctrl.searchTerm) != -1){
+                foundItems.push(items[i]);
+              }
             }
-          }
-          ctrl.found = foundItems;
-        })
-        .catch(function (error) {
-          console.log("Something went terribly wrong.");
-        });
+
+          })
+          .catch(function (error) {
+            console.log("Something went wrong.");
+          });
+        }
+        ctrl.found = foundItems;
       };
 
       ctrl.removeItem = function (itemIndex) {
